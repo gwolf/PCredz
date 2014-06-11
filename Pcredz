@@ -493,8 +493,8 @@ def Print_Packet_Cooked(pktlen, data, timestamp):
         return
     if data[14:16]=='\x08\x00':
         decoded=Decode_Ip_Packet(data[16:])
-        SrcPort =  struct.unpack('>H',decoded['data'][0:2])[0]
-        DstPort =  struct.unpack('>H',decoded['data'][2:4])[0]
+        SrcPort =  struct.unpack('>H',decoded['data'][0:2])[0] if len(decoded['data']) >= 2 else 0
+        DstPort =  struct.unpack('>H',decoded['data'][2:4])[0] if len(decoded['data']) >= 4 else 0
         ParseDataRegex(decoded, SrcPort, DstPort)
 
 def Print_Packet_800dot11(pktlen, data, timestamp):
@@ -502,8 +502,8 @@ def Print_Packet_800dot11(pktlen, data, timestamp):
         return
     if data[32:34]=='\x08\x00':
         decoded=Decode_Ip_Packet(data[34:])
-        SrcPort =  struct.unpack('>H',decoded['data'][0:2])[0]
-        DstPort =  struct.unpack('>H',decoded['data'][2:4])[0]
+        SrcPort =  struct.unpack('>H',decoded['data'][0:2])[0] if len(decoded['data']) >= 2 else 0
+        DstPort =  struct.unpack('>H',decoded['data'][2:4])[0] if len(decoded['data']) >= 4 else 0
         ParseDataRegex(decoded, SrcPort, DstPort)
 
 def Print_Packet_Tcpdump(pktlen, data, timestamp):
@@ -511,14 +511,8 @@ def Print_Packet_Tcpdump(pktlen, data, timestamp):
         return
     if data[12:14]=='\x08\x00':
         decoded= Decode_Ip_Packet(data[14:])
-        if len(decoded['data']) >= 2:
-            SrcPort= struct.unpack('>H',decoded['data'][0:2])[0]
-        else:
-            SrcPort = 0
-        if len(decoded['data']) > 2:
-            DstPort = struct.unpack('>H',decoded['data'][2:4])[0]
-        else:
-            DstPort = 0
+        SrcPort = struct.unpack('>H',decoded['data'][0:2])[0] if len(decoded['data']) >= 2 else 0
+        DstPort = struct.unpack('>H',decoded['data'][2:4])[0] if len(decoded['data']) >= 4 else 0
         ParseDataRegex(decoded, SrcPort, DstPort)
 
 def decode_file(fname,res):
